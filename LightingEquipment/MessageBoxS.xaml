@@ -1,0 +1,87 @@
+﻿<Window x:Class="LightingEquipment.MessageBoxS"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LightingEquipment"
+        mc:Ignorable="d"
+        Width="300"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="True" WindowStyle="None">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="21"/>
+            <RowDefinition MinHeight="70" Height="*"/>
+            <RowDefinition Height="33"/>
+        </Grid.RowDefinitions>
+        
+        
+        <!--toolbar-->
+        <Grid 
+			Name="Toolbar"
+			Grid.ColumnSpan="4"
+			Background="{DynamicResource tool}"
+            MouseDown="DragMove">
+
+            <!--Название окна-->
+            <StackPanel
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Left">
+                <Label 
+                    
+                    x:Name="TitleS"
+				    Margin="5 0 0 0" 
+				    Foreground="{StaticResource toolName}" 
+                    FontSize="9"
+                    Content="Информация"/>
+            </StackPanel>
+
+
+            <StackPanel 
+				HorizontalAlignment="Right" 
+				Orientation="Horizontal">
+
+               
+                <!--кнопка выход-->
+                <Border
+					Name="Exit" 
+					Width="24" Height="24" 
+					Margin="1,0" 
+					Background="Transparent"
+                    MouseDown="Exit_MouseDown">
+
+                    <Image Width="12" Height="12">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Source" Value="/Sourse/exit.png" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=Exit}" Value="True">
+                                        <Setter Property="Source" Value="/Sourse/exit on.png" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <TextBlock
+            Foreground="{StaticResource tool}"
+            x:Name="Text"
+            Text="Информация"
+            Grid.Row="1"
+            Margin="10">
+        </TextBlock>
+
+        <Grid Grid.Row="2">
+            <Button 
+                Style="{StaticResource ButtonS2}"
+                HorizontalAlignment="Right"
+                Width="40"
+                Content="OK"
+                Margin="5" Click="Button_Click"/>
+        </Grid>
+    </Grid>
+</Window>
