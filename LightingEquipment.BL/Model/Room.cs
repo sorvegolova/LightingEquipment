@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LightingEquipment.Model
+namespace LightingEquipment.BL.Model
 {
 	public class Room
 	{
