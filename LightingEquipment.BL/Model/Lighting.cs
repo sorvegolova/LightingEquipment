@@ -45,8 +45,27 @@ namespace LightingEquipment.BL.Model
 		/// <summary> Коэффициент использования </summary>
 		public float CoefUsage { get; }
 
+		private Lamp[] selectLamps;
 		/// <summary> Выбранные лампы при расчёте </summary>
-		public Lamp[] SelectLamps { get; private set; }
+		public Lamp[] SelectLamps 
+		{
+			get
+			{
+				if (Lamps == null || Lamps.Length == 0)
+				{
+					throw new ArgumentException("Лампы не были добавлены для выбора по рассчётам", nameof(Lamps));
+				}
+
+				if (selectLamps == null || selectLamps.Length == 0)
+				{
+					throw new ArgumentException("Ни одна лампа не соответствует нормам, исходя из расчётов", nameof(selectLamps));
+				}
+
+				return selectLamps;
+
+			} 
+			private set => selectLamps = value; 
+		}
 
 
 

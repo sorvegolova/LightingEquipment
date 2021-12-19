@@ -12,7 +12,7 @@ namespace LightingEquipment.BL.Model
 		public float Width { get; }
 
 		/// <summary> Высота помещения </summary>
-		private float Height { get; }
+		public float Height { get; }
 
 		/// <summary> Высота рабочей поверхности </summary>
 		public float HeightWorkingSurface { get; }
