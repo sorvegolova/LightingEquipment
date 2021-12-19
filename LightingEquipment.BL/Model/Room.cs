@@ -2,6 +2,7 @@
 
 namespace LightingEquipment.BL.Model
 {
+	/// <summary> Объект - Комната </summary>
 	public class Room
 	{
 		/// <summary> Длина помещения </summary>
@@ -32,11 +33,21 @@ namespace LightingEquipment.BL.Model
 		/// <summary> Высота светильника </summary>
 		public float HeightLuminaire { get; }
 
+		/// <summary>
+		/// Создать комнату
+		/// </summary>
+		/// <param name="length">Длина комнаты</param>
+		/// <param name="width">Ширина комнаты</param>
+		/// <param name="height">Высота комнаты</param>
+		/// <param name="heightWorkingSurface">Высота рабочей поверхности</param>
+		/// <param name="heightOverhang">Высота свеса светильника</param>
+		/// <param name="normIllumination">Нормированная освещённость</param>
 		public Room(
 			float length, float width, float height,
 			float heightWorkingSurface, float heightOverhang,
 			int normIllumination)
 		{
+			#region Проверка
 			if (length <= 0)
 			{
 				throw new ArgumentException($"Длина помещения не может быть отрицательной или равной 0");
@@ -65,8 +76,8 @@ namespace LightingEquipment.BL.Model
 			if (normIllumination <= 0)
 			{
 				throw new ArgumentException($"Нормированная освещённость не может быть отрицательной или равной 0");
-			}
-
+			} 
+			#endregion
 
 			Length = length;
 			Width = width;
@@ -77,7 +88,7 @@ namespace LightingEquipment.BL.Model
 
 			Square = Width * Height;
 			HeightLuminaire = Height - HeightOverhang - HeightWorkingSurface;
-			Index = Width * Height / (Height * (Width + Height));
+			Index = (float)Math.Round(Width * Height / (Height * (Width + Height)), 3);
 		}
 	}
 }

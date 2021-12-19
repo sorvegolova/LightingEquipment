@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31613.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightingEquipment", "lightingEquipment\LightingEquipment.csproj", "{5788F746-0696-418E-B23C-A8CFE4C4C08C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightingEquipment.BL", "LightingEquipment.BL\LightingEquipment.BL.csproj", "{AF98A245-E2F2-46D4-AA9F-F7071B6DFFA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightingEquipment.BL", "LightingEquipment.BL\LightingEquipment.BL.csproj", "{AF98A245-E2F2-46D4-AA9F-F7071B6DFFA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

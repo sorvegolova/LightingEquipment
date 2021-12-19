@@ -6,22 +6,30 @@ using System.Threading.Tasks;
 
 namespace LightingEquipment.BL.Model
 {
+	/// <summary> Освещение Коэффициентом использования </summary>
 	class Lighting
 	{
-		public static CoefUsage[] CoefUsages;
+		/// <summary> Массив объектов коэффициентов использования </summary>
+		public static CoefUsage[] CoefUsages { get; internal set; }
+
+		/// <summary> Массив ламп </summary>
+		public static Lamp[] Lamps { get; internal set; }
+
+
+		/// <summary> Объект комната </summary>
 		public Room Room { get; private set; }
+
+		/// <summary> Кривая силы света </summary>
 		public LightCurve LightCurve { get; private set; }
+
+		/// <summary> Тип лампы в светильнике </summary>
 		public TypeLamp TypeLamp { get; private set; }
-
-
-
 
 		/// <summary> Расстояние светильников друг от друга </summary>
 		public float DistanceLamps { get; private set; }
 
 		/// <summary> Расстояние крайних светильников </summary>
 		public float DistanceLastLamps { get; }
-
 
 
 
@@ -37,6 +45,9 @@ namespace LightingEquipment.BL.Model
 		/// <summary> Коэффициент использования </summary>
 		public float CoefUsage { get; }
 
+		/// <summary> Выбранные лампы при расчёте </summary>
+		public Lamp[] SelectLamps { get; private set; }
+
 
 
 		/// <summary> Кол-во ламп по длине помещения </summary>
@@ -49,8 +60,7 @@ namespace LightingEquipment.BL.Model
 		public float CountLamp { get; private set; }
 
 		/// <summary> Световой поток </summary>
-		public float LuminousFlux { get; private set; }
-
+		public int LuminousFlux { get; private set; }
 
 
 		public Lighting(
@@ -58,12 +68,8 @@ namespace LightingEquipment.BL.Model
 			int reflectionCeilingCoef, int reflectionWallCoef, int reflectionWorkSurfCoef,
 			float distanceLamps) : this(room, lightCurve, typeLamp, distanceLamps)
 		{
-			if(CoefUsages == null)
-			{
-				throw new ArgumentException($"Нет данных данных о коэффициентах использования");
-			}
-
-			if (CoefUsages.Length == 0)
+			#region Проверка
+			if (CoefUsages == null || CoefUsages.Length == 0)
 			{
 				throw new ArgumentException($"Нет данных данных о коэффициентах использования");
 			}
@@ -86,12 +92,12 @@ namespace LightingEquipment.BL.Model
 			if (reflectionWorkSurfCoef < 0 || reflectionWorkSurfCoef > 100)
 			{
 				throw new ArgumentException($"Коэффициент отражения рабочей поверхности не может быть меньше 0 или больше 100");
-			}
+			} 
+			#endregion
 
 			ReflectionCeilingCoef = reflectionCeilingCoef;
 			ReflectionWallCoef = reflectionWallCoef;
 			ReflectionWorkSurfCoef = reflectionWorkSurfCoef;
-
 
 			#region Нахождение коэффициента использования
 			int nearReflection;
@@ -235,19 +241,21 @@ namespace LightingEquipment.BL.Model
 			{
 				throw new ArgumentException($"Коэффициент использования не может быть меньше или равным 0");
 			}
+
 			CoefUsage = coefUsage;
 			CalculationParametrs();
 		}
-
 
 
 		private Lighting(
 			Room room, LightCurve lightCurve, TypeLamp typeLamp,
 			float distanceLamps)
 		{
+			#region Проверка
 			Room = room ?? throw new ArgumentNullException(nameof(room));
 			LightCurve = lightCurve ?? throw new ArgumentNullException(nameof(lightCurve));
-			TypeLamp = typeLamp ?? throw new ArgumentNullException(nameof(typeLamp));
+			TypeLamp = typeLamp ?? throw new ArgumentNullException(nameof(typeLamp)); 
+			#endregion
 
 			if (distanceLamps <= 0)
 			{
@@ -262,7 +270,7 @@ namespace LightingEquipment.BL.Model
 		/// </summary>
 		/// <param name="value">Число для поиска</param>
 		/// <param name="valueMas">Массив чисел для поиска</param>
-		/// <returns></returns>
+		/// <returns>ближайшее число из массива</returns>
 		private int GetNearNum(int value, int[] valueMas)
 		{
 			int nearNum = 0;
@@ -282,13 +290,28 @@ namespace LightingEquipment.BL.Model
 			return nearNum;
 		}
 
+		/// <summary> 
+		/// Функция рассчёта параметров и выбор лампы
+		/// (кол-во ламп по длине, кол-во ламп по ширине, кол-во ламп, световой поток)  
+		/// </summary>
 		private void CalculationParametrs()
 		{
 			CountLampLengthRoom = ((Room.Length - 2 * DistanceLastLamps) / DistanceLamps) + 1;
 			CountLampWidthRoom = ((Room.Width - 2 * DistanceLastLamps) / DistanceLamps) + 1;
 			CountLamp = CountLampLengthRoom * CountLampWidthRoom;
 
-			LuminousFlux = Room.NormIllumination * Room.Square * TypeLamp.CoefMinIllumination * TypeLamp.CoefStore / (CountLamp * CoefUsage);
+			LuminousFlux = (int)Math.Round((Room.NormIllumination * Room.Square * TypeLamp.CoefMinIllumination * TypeLamp.CoefStore / (CountLamp * CoefUsage)));
+
+			//Выбор лампы, если загружен список ламп
+			if (Lamps != null && Lamps.Length > 1)
+			{
+				int luminousFlux90Persent = (int)Math.Round(LuminousFlux * 0.9);
+				int luminousFlux120Persent = (int)Math.Round(LuminousFlux * 1.2);
+				 
+				SelectLamps = Lamps.Where(x => (x.TypeLamp == TypeLamp.Name) && (x.LightCurveName == LightCurve.Name))
+										 .Where(x => (x.LuminousFlux > luminousFlux90Persent) || (x.LuminousFlux < luminousFlux120Persent)) 
+										 .ToArray();
+			}
 		}
 	}
 }
